@@ -1,12 +1,13 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY, 
-    user_id INTEGER NOT NULL UNIQUE, 
+    user_id BIGINT NOT NULL UNIQUE, 
     username VARCHAR(255), 
-    reg_date TIME WITHOUT TIME ZONE
+    offset_for_searching INTEGER DEFAULT 0,
+    reg_date TIME WITHOUT TIME ZONE DEFAULT NOW()
 );
 CREATE TABLE favourites (
     id SERIAL PRIMARY KEY, 
-    fav_user_id INTEGER NOT NULL, 
+    fav_user_id BIGINT NOT NULL, 
     api_recipe_id INTEGER NOT NULL, 
     title VARCHAR(255), 
     added_at TIME WITHOUT TIME ZONE, 
