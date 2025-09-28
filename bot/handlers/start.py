@@ -5,12 +5,11 @@ from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 
 from db_handlers.database import get_user, create_user
-from keyboards.inline_kbs import welcome_kbs
+from .messages import send_welcome_message
 
 start_router = Router()
 
-async def send_welcome_message(message: Message):
-    await message.answer(f"Привет, я бот-менеджер рецептов 🤖. Чем могу быть полезен?", reply_markup=welcome_kbs())
+
 
 @start_router.message(Command('start'))
 async def welcome_handler(message: Message, dispatcher: Dispatcher):

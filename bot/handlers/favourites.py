@@ -14,3 +14,7 @@ async def get_favourite_recipes(callback_query: CallbackQuery, dispatcher: Dispa
     favourites = cursor.fetchall()
     if len(favourites) == 0:
         await callback_query.message.edit_text('У вас пока что нет любимых рецептов.', reply_markup=fav_recipes_kbs())
+
+@favourites_router.callback_query(F.data == 'add_to_favourite')
+async def add_to_favourite(callback_query: CallbackQuery, dispatcher: Dispatcher):
+    pass
