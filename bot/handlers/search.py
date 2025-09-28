@@ -26,17 +26,16 @@ async def search_by_ingredients(callback_query: CallbackQuery, state: FSMContext
 async def process_ingredients(message: Message, state: FSMContext, dispatcher: Dispatcher):
     conn = dispatcher["db_connection"]
     ingredients = message.text.split(', ')
-    if len(ingredients) > 0:
-        user = get_user(conn, message.from_user.id)
-        search_offset = user[-2]
-        recipes = await fetch_recipes_by_ingredients(ingredients, search_offset)
-        if recipes:
-            await message.answer("Я нашёл для тебя несколько рецептов, исходя из твоих ингредиентов.")
-            for recipe in recipes:
-                await send_recipe_message(message, recipe)
-            modify_user_offset(conn, user[1], search_offset)
-        else:
-            await message.answer('Не было найдено рецептов по вашим ингредиентам.')
+    user = get_user(conn, message.from_user.id)
+    search_offset = user[-2]
+    recipes = await fetch_recipes_by_ingredients(ingredients, search_offset)
+    if recipes:
+        await message.answer("Я нашёл для тебя несколько рецептов, исходя из твоих ингредиентов.")
+        modify_user_offset(conn, user[1], search_offset)
+        for recipe in recipes:
+            await send_recipe_message(message, recipe)
+    else:
+        await message.answer('Не было найдено рецептов по вашим ингредиентам.')
     await state.clear()
 
 @search_router.callback_query(F.data == 'search_by_cuisine')
@@ -49,12 +48,13 @@ async def country_cuisine(callback_query: CallbackQuery, dispatcher: Dispatcher)
     cuisine_type = callback_query.data.split('_')[-1]
     user = get_user(conn, callback_query.from_user.id)
     search_offset = user[-2]
+    
     recipes = await fetch_recipes_by_cuisine(cuisine_type, search_offset)
     if recipes:
         await callback_query.message.answer('Я нашёл для тебя несколько рецептов, исходя из выбранной кулинарии.')
+        modify_user_offset(conn, user[1], search_offset)
         for recipe in recipes:
             recipe_with_ingr = await fetch_recipe_by_id(recipe['id'])
             await send_recipe_message(callback_query.message, recipe_with_ingr)
-        # modify_user_offset(conn, user[1], search_offset)
     else:
         await callback_query.message.answer('Не было найдено рецептов из данной кухни.')

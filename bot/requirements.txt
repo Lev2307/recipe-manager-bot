@@ -3,3 +3,4 @@ aiogram
 psycopg2-binary
 requests
 googletrans==4.0.2
+redis==6.4.0

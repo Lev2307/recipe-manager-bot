@@ -50,6 +50,7 @@ def modify_user_offset(conn, user_id: int, old_offset: int):
     new_offset = 0
     if (old_offset + 1) <= 900:
         new_offset = old_offset + 1
+        print(new_offset)
     cursor = conn.cursor()
     cursor.execute(
         """
