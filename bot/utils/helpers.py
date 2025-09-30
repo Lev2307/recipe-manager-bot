@@ -17,15 +17,9 @@ async def translate_with_cache(text: str, dest='en'):
 async def translate_ingredients_to_en(ingredients: list):
     '''Translate ingredients, got from user input, from any lang to en.'''
     new_ingr_trans = []
-    async with Translator() as translator:
-        detected_lang = await translator.detect(text=','.join(ingredients))
-
-    if detected_lang.lang == 'en':
-        new_ingr_trans = ingredients.copy()
-    else:
-        for i in ingredients:
-            res = await translate_with_cache(i)
-            new_ingr_trans.append(res)
+    for i in ingredients:
+        res = await translate_with_cache(i)
+        new_ingr_trans.append(res)
     return new_ingr_trans
 
 async def translate_ingredients_from_en_to_ru(ingredients: list):

@@ -10,6 +10,6 @@ async def send_recipe_message(message: Message, recipe: dict):
     ingr = await generate_ingredients_from_recipe(recipe)
     await message.answer_photo(
         photo=recipe['image'], 
-        caption=f"🍽 Рецепт: {recipe['title']}\nИнгредиенты:\n{ingr}",
-        reply_markup=add_to_favourite()
+        caption=f"🍽 Рецепт: {recipe['title']}\nИнгредиенты:\n{ingr}\nВремя приготовления: {recipe['readyInMinutes']} минут.",
+        reply_markup=add_to_favourite(recipe['id'])
     )

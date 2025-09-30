@@ -1,5 +1,20 @@
+import json
+
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+
+from utils.callBacks import AddToFavouritesCallback, CuisineCallback
+
+CUISINES = [
+    ['🇺🇸 Американская', 'American'], 
+    ['🇬🇧 Британская', 'British'], 
+    ['🇨🇳 Китайская', 'Chinese'], 
+    ['🇫🇷 Французская', 'French'], 
+    ['🇩🇪 Немецкая', 'German'], 
+    ['🇮🇹 Итальянская', 'Italian'], 
+    ['🇲🇽 Мексиканская', 'Mexican'], 
+    ['🇰🇷 Корейская', 'Korean'],
+]
 
 def welcome_kbs():
     inline_kb_list = [
@@ -8,7 +23,7 @@ def welcome_kbs():
     ]
     return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)
 
-def fav_recipes_kbs():
+def favourite_recipes_kbs():
     inline_kb_list = [
         [InlineKeyboardButton(text="Найти рецепты 🔎", callback_data="search_recipes")],
         [InlineKeyboardButton(text="Вернуться на главную", callback_data="go_to_start")]
@@ -22,21 +37,17 @@ def search_recipes_kbs():
     ]
     return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)
 
-def add_to_favourite():
+def add_to_favourite(recipe_id: int):
     inline_kb_list = [
-        [InlineKeyboardButton(text="Добавить к избранным рецептам", callback_data="add_to_favourites")]
+        [InlineKeyboardButton(text="Добавить к избранным рецептам", callback_data=AddToFavouritesCallback(recipe_id=recipe_id).pack())]
     ]
     return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)
 
-def countries_cuisines():
+def countries_cuisines(m_id: int):
     builder = InlineKeyboardBuilder()
-    builder.button(text="🇺🇸 Американская", callback_data="cuisine_American")
-    builder.button(text="🇬🇧 Британская", callback_data="cuisine_British")
-    builder.button(text="🇨🇳 Китайская", callback_data="cuisine_Chinese")
-    builder.button(text="🇫🇷 Французская", callback_data="cuisine_French")
-    builder.button(text="🇩🇪 Немецкая", callback_data="cuisine_German")
-    builder.button(text="🇮🇹 Итальянская", callback_data="cuisine_Italian")
-    builder.button(text="🇲🇽 Мексиканская", callback_data="cuisine_Mexican")
+    for cuis in range(len(CUISINES)):
+        builder.button(text=CUISINES[cuis][0], callback_data=CuisineCallback(cuisine=CUISINES[cuis][1], prev_message_id=m_id))
+    builder.button(text="Вернуться на главную", callback_data="go_to_start")
     builder.adjust(2)
 
     return builder.as_markup()

@@ -21,7 +21,7 @@ async def main():
     bot = Bot(token=TOKEN)
     conn = create_connection()
     dp["db_connection"] = conn
-
+    dp["bot"] = bot
     dp.include_routers(start_router, favourites_router, search_router)
     await dp.start_polling(bot)
 

@@ -50,7 +50,6 @@ def modify_user_offset(conn, user_id: int, old_offset: int):
     new_offset = 0
     if (old_offset + 1) <= 900:
         new_offset = old_offset + 1
-        print(new_offset)
     cursor = conn.cursor()
     cursor.execute(
         """
@@ -61,3 +60,16 @@ def modify_user_offset(conn, user_id: int, old_offset: int):
         (new_offset, user_id)
     )
     cursor.close()
+
+def add_favourite_recipe_to_user(conn, user_id: int, recipe_id: int):
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO favourites (fav_user_id, api_recipe_id) VALUES (%s, %s);", (user_id, recipe_id))
+    conn.commit()
+    cursor.close()
+
+def get_favourite_recipe(conn, user_id: int, recipe_id: int):
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM favourites WHERE fav_user_id=%s AND api_recipe_id=%s;", (user_id, recipe_id))
+    fav = cursor.fetchone()
+    cursor.close()
+    return fav

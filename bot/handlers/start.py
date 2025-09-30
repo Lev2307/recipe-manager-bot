@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from aiogram import Router, F, Dispatcher
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
@@ -8,8 +6,6 @@ from db_handlers.database import get_user, create_user
 from .messages import send_welcome_message
 
 start_router = Router()
-
-
 
 @start_router.message(Command('start'))
 async def welcome_handler(message: Message, dispatcher: Dispatcher):
