@@ -1,6 +1,8 @@
+from datetime import datetime
+import os
+
 import psycopg2
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
@@ -61,9 +63,15 @@ def modify_user_offset(conn, user_id: int, old_offset: int):
     )
     cursor.close()
 
-def add_favourite_recipe_to_user(conn, user_id: int, recipe_id: int):
+def add_favourite_recipe_to_user(conn, user_id: int, recipe_id: int, added_at: datetime):
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO favourites (fav_user_id, api_recipe_id) VALUES (%s, %s);", (user_id, recipe_id))
+    cursor.execute("INSERT INTO favourites (fav_user_id, api_recipe_id, added_at) VALUES (%s, %s, %s);", (user_id, recipe_id, added_at))
+    conn.commit()
+    cursor.close()
+
+def delete_recipe_from_favourites(conn, user_id: int, recipe_id: int):
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM favourites WHERE fav_user_id=%s AND api_recipe_id=%s", (user_id, recipe_id))
     conn.commit()
     cursor.close()
 
@@ -73,3 +81,13 @@ def get_favourite_recipe(conn, user_id: int, recipe_id: int):
     fav = cursor.fetchone()
     cursor.close()
     return fav
+
+def get_favourites(conn, user_id: int):
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT * FROM favourites WHERE fav_user_id=%s
+        ORDER BY added_at;
+    """, (user_id, ))
+    favourites = cursor.fetchall()
+    cursor.close()
+    return favourites

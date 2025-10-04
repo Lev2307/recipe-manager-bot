@@ -1,9 +1,7 @@
-import json
-
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from utils.callBacks import AddToFavouritesCallback, CuisineCallback
+from utils.callBacks import AddToFavouritesCallback, DeleteFromFavouritesCallback, CuisineCallback
 
 CUISINES = [
     ['🇺🇸 Американская', 'American'], 
@@ -37,9 +35,15 @@ def search_recipes_kbs():
     ]
     return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)
 
-def add_to_favourite(recipe_id: int):
+def add_to_favourites(recipe_id: int):
     inline_kb_list = [
-        [InlineKeyboardButton(text="Добавить к избранным рецептам", callback_data=AddToFavouritesCallback(recipe_id=recipe_id).pack())]
+        [InlineKeyboardButton(text="Добавить к избранным рецептам 📌", callback_data=AddToFavouritesCallback(recipe_id=recipe_id).pack())]
+    ]
+    return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)
+
+def delete_from_favourites(recipe_id: int):
+    inline_kb_list = [
+        [InlineKeyboardButton(text="Удалить из избранного 🗑️", callback_data=DeleteFromFavouritesCallback(recipe_id=recipe_id).pack())]
     ]
     return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)
 
