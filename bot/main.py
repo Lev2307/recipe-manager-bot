@@ -14,6 +14,7 @@ from handlers.search import search_router
 
 load_dotenv()
 TOKEN = os.environ.get('TG_BOT_TOKEN')
+TZ = 'Europe/Moscow'
 
 dp = Dispatcher()
 

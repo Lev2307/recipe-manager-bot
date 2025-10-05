@@ -4,6 +4,7 @@ CREATE TABLE users (
     id SERIAL PRIMARY KEY, 
     user_id BIGINT NOT NULL UNIQUE, 
     username VARCHAR(255), 
+    last_search_request_time TIMESTAMP WITH TIME ZONE,
     offset_for_searching INTEGER DEFAULT 10,
     reg_date TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

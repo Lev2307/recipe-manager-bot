@@ -1,10 +1,19 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
+import pytz
 
 import psycopg2
 from dotenv import load_dotenv
 
 load_dotenv()
+
+def generate_fav_recipe_data(favourite_recipe: tuple):
+    return {
+            'id': favourite_recipe[0],
+            'fav_user_id': favourite_recipe[1],
+            'api_recipe_id': favourite_recipe[2],
+            'added_at': favourite_recipe[3],
+        }
 
 def create_connection():
     try:
@@ -38,12 +47,22 @@ def get_user(conn, user_id: int):
     cursor.execute("SELECT * FROM users WHERE user_id=%s;", (user_id, ))
     user = cursor.fetchone()
     cursor.close()
+    if user:
+        return {
+            'id': user[0],
+            'user_id': user[1],
+            'username': user[2],
+            'last_search_request_time': user[3],
+            'offset_for_searching': user[4],
+            'reg_date': user[5]
+        }
     return user
 
 def create_user(conn, user_id, username):
     """ Creates user instance in db """
+    five_minutes_earlier_time = datetime.now(pytz.timezone('Europe/Moscow')) + timedelta(minutes=-5)
     cur = conn.cursor()
-    cur.execute("INSERT INTO users (user_id, username) VALUES (%s, %s);", (user_id, username))
+    cur.execute("INSERT INTO users (user_id, username, last_search_request_time) VALUES (%s, %s, %s);", (user_id, username, five_minutes_earlier_time))
     conn.commit()
     cur.close()
     
@@ -61,6 +80,19 @@ def modify_user_offset(conn, user_id: int, old_offset: int):
         """, 
         (new_offset, user_id)
     )
+    conn.commit()
+    cursor.close()
+
+def modify_last_search_request_time(conn, user_id: int, new_time: datetime):
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+            UPDATE users
+            SET last_search_request_time=%s
+            WHERE user_id=%s;
+        """,
+        (new_time, user_id))
+    conn.commit()
     cursor.close()
 
 def add_favourite_recipe_to_user(conn, user_id: int, recipe_id: int, added_at: datetime):
@@ -80,6 +112,8 @@ def get_favourite_recipe(conn, user_id: int, recipe_id: int):
     cursor.execute("SELECT * FROM favourites WHERE fav_user_id=%s AND api_recipe_id=%s;", (user_id, recipe_id))
     fav = cursor.fetchone()
     cursor.close()
+    if fav:
+        return generate_fav_recipe_data(fav)
     return fav
 
 def get_favourites(conn, user_id: int):
@@ -90,4 +124,4 @@ def get_favourites(conn, user_id: int):
     """, (user_id, ))
     favourites = cursor.fetchall()
     cursor.close()
-    return favourites
+    return [generate_fav_recipe_data(fav) for fav in favourites]

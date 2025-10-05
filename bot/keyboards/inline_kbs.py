@@ -21,6 +21,12 @@ def welcome_kbs():
     ]
     return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)
 
+def go_home_kbs():
+    inline_list = [
+        [InlineKeyboardButton(text="Вернуться на главную", callback_data="go_to_start")]
+    ]
+    return InlineKeyboardMarkup(inline_keyboard=inline_list)
+
 def favourite_recipes_kbs():
     inline_kb_list = [
         [InlineKeyboardButton(text="Найти рецепты 🔎", callback_data="search_recipes")],
