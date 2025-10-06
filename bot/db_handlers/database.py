@@ -52,9 +52,11 @@ def get_user(conn, user_id: int):
             'id': user[0],
             'user_id': user[1],
             'username': user[2],
-            'last_search_request_time': user[3],
-            'offset_for_searching': user[4],
-            'reg_date': user[5]
+            'offset_for_searching': user[3],
+            'is_sub': user[4],
+            'last_search_request_time': user[5],
+            'count_requests_per_day': user[6],
+            'reg_date': user[7],
         }
     return user
 
@@ -65,35 +67,27 @@ def create_user(conn, user_id, username):
     cur.execute("INSERT INTO users (user_id, username, last_search_request_time) VALUES (%s, %s, %s);", (user_id, username, five_minutes_earlier_time))
     conn.commit()
     cur.close()
-    
-def modify_user_offset(conn, user_id: int, old_offset: int):
-    """ Modifies offset_for_searching field increasing it by 1 or rather zeroing it out when offset gets more than 900 """
+
+def modify_user_fields(conn, user_id: int, old_offset: int, new_time: datetime, requests_counter: int):
+    """ Modifies user fields:
+        1. offset_for_searching: modifies field increasing it by 1 or rather zeroing it out when offset gets more than 900 
+        2. last_search_request_time:  sets the new time of the last search request 
+        3. count_requests_per_day: increments the counter with each new request per day
+    """
     new_offset = 0
     if (old_offset + 1) <= 900:
         new_offset = old_offset + 1
+    
     cursor = conn.cursor()
     cursor.execute(
         """
             UPDATE users
-            SET offset_for_searching=%s
+            SET offset_for_searching=%s, last_search_request_time=%s, count_requests_per_day=%s
             WHERE user_id=%s;
-        """, 
-        (new_offset, user_id)
-    )
+        """, (new_offset, new_time, requests_counter, user_id))
     conn.commit()
     cursor.close()
-
-def modify_last_search_request_time(conn, user_id: int, new_time: datetime):
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-            UPDATE users
-            SET last_search_request_time=%s
-            WHERE user_id=%s;
-        """,
-        (new_time, user_id))
-    conn.commit()
-    cursor.close()
+    
 
 def add_favourite_recipe_to_user(conn, user_id: int, recipe_id: int, added_at: datetime):
     cursor = conn.cursor()

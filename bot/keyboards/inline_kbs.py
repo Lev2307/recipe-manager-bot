@@ -15,11 +15,12 @@ CUISINES = [
 ]
 
 def welcome_kbs():
-    inline_kb_list = [
-        [InlineKeyboardButton(text="Избранные рецепты 🍳", callback_data="get_favourite_recipes")],
-        [InlineKeyboardButton(text="Найти рецепты 🔎", callback_data="search_recipes")]
-    ]
-    return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Избранные рецепты 🍳", callback_data="get_favourite_recipes")
+    builder.button(text="Найти рецепты 🔎", callback_data="search_recipes")
+    builder.button(text="Настройки ⚙️", callback_data="profile")
+    builder.adjust(2)
+    return builder.as_markup()
 
 def go_home_kbs():
     inline_list = [
@@ -27,12 +28,19 @@ def go_home_kbs():
     ]
     return InlineKeyboardMarkup(inline_keyboard=inline_list)
 
+def profile_kbs():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Избранные рецепты 🍳", callback_data="get_favourite_recipes")
+    builder.button(text="Найти рецепты 🔎", callback_data="search_recipes")
+    builder.adjust(2)
+    return builder.as_markup()
+
 def favourite_recipes_kbs():
-    inline_kb_list = [
-        [InlineKeyboardButton(text="Найти рецепты 🔎", callback_data="search_recipes")],
-        [InlineKeyboardButton(text="Вернуться на главную", callback_data="go_to_start")]
-    ]
-    return InlineKeyboardMarkup(inline_keyboard=inline_kb_list)
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Найти рецепты 🔎", callback_data="search_recipes")
+    builder.button(text="Вернуться на главную", callback_data="go_to_start")
+    builder.adjust(2)
+    return builder.as_markup()
 
 def search_recipes_kbs():
     inline_kb_list = [

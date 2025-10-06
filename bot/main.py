@@ -11,6 +11,7 @@ from db_handlers.database import create_connection
 from handlers.start import start_router
 from handlers.favourites import favourites_router
 from handlers.search import search_router
+from handlers.profile import profile_router
 
 load_dotenv()
 TOKEN = os.environ.get('TG_BOT_TOKEN')
@@ -23,7 +24,7 @@ async def main():
     conn = create_connection()
     dp["db_connection"] = conn
     dp["bot"] = bot
-    dp.include_routers(start_router, favourites_router, search_router)
+    dp.include_routers(start_router, favourites_router, search_router, profile_router)
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
