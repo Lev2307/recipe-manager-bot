@@ -39,6 +39,7 @@ async def generate_ingredients_from_recipe(recipe: dict):
         all_ingr = recipe.get('extendedIngredients')
     ingredients = [ingr['original'] for ingr in all_ingr]
     ingredients_trans = await translate_ingredients_from_en_to_ru(ingredients)
+    print(ingredients_trans)
     ingredients_trans = ['• '+ingr for ingr in ingredients_trans]
 
     return ",\n".join(ingredients_trans)

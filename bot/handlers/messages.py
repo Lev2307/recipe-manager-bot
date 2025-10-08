@@ -7,11 +7,13 @@ from keyboards.inline_kbs import welcome_kbs, add_to_favourites, delete_from_fav
 from utils.helpers import generate_ingredients_from_recipe
 from utils.api_handlers import fetch_recipe_by_id
 
+GAP_BETWEEN_REQUESTS_IN_MINUTES = 4
+
 async def send_welcome_message(message: Message):
     await message.answer(f"Привет, я бот-менеджер рецептов 🤖. Чем могу быть полезен?", reply_markup=welcome_kbs())
 
 async def send_search_message(query: CallbackQuery, time_diff):
-    if time_diff >= 5:
+    if time_diff >= GAP_BETWEEN_REQUESTS_IN_MINUTES:
         await query.message.edit_text('По какому паттерну вы хотите найти рецепты?', reply_markup=search_recipes_kbs())
     else:
         await query.message.edit_text(f'К сожалению, вы можете искать рецепты раз в пять минут. Следующий запрос вы можете сделать через {5 - int(time_diff)} минуты ;>', reply_markup=go_home_kbs())

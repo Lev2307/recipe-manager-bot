@@ -15,7 +15,8 @@ from .messages import send_recipe_message, send_search_message
 
 MAX_REQUESTS_PER_DAY_FOR_UNSUB = 3
 MAX_REQUESTS_PER_DAY_FOR_SUB = 10
-RECIPES_NOT_FOUND_MESSAGE = 'Не было найдено рецептов по вашим ингредиентам.'
+RECIPES_NOT_FOUND_BY_INGR_MESSAGE = 'Не было найдено новых рецептов по вашим ингредиентам.'
+RECIPES_NOT_FOUND_BY_CUISINE_MESSAGE = 'Не удалось найти новые рецепты по этой национальной кухне.'
 
 class IngredientSearch(StatesGroup):
     waiting_for_ingredients = State()
@@ -71,7 +72,7 @@ async def process_ingredients(message: Message, state: FSMContext, dispatcher: D
             text="✅ Нашёл для тебя несколько рецептов, исходя из выбранных ингредиентов."
         )
     else:
-        await message.answer(RECIPES_NOT_FOUND_MESSAGE)
+        await message.answer(RECIPES_NOT_FOUND_BY_INGR_MESSAGE)
     await state.clear()
 
 @search_router.callback_query(F.data == 'search_by_cuisine')
@@ -112,5 +113,5 @@ async def country_cuisine(query: CallbackQuery, callback_data: CuisineCallback, 
         await dispatcher['bot'].edit_message_text(
             chat_id=search_message.chat.id, 
             message_id=search_message.message_id, 
-            text=RECIPES_NOT_FOUND_MESSAGE
+            text=RECIPES_NOT_FOUND_BY_CUISINE_MESSAGE
         )

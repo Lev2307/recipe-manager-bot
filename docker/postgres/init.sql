@@ -4,7 +4,7 @@ CREATE TABLE users (
     id SERIAL PRIMARY KEY, 
     user_id BIGINT NOT NULL UNIQUE,
     username VARCHAR(255), 
-    offset_for_searching INTEGER DEFAULT 20,
+    offset_for_searching INTEGER DEFAULT 1,
     is_sub BOOLEAN DEFAULT TRUE, 
     last_search_request_time TIMESTAMP WITH TIME ZONE,
     count_requests_per_day INTEGER DEFAULT 0,
